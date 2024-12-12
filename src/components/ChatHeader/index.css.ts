@@ -16,7 +16,6 @@ export const styles = css`
     width: 100%;
     margin: 0;
     font-size: 1rem;
-
   }
   .dataisland-widget-header__close {
     color: var(--dataisland-widget-header-close-color);

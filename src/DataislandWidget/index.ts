@@ -1,7 +1,7 @@
 import { LitElement, html } from 'lit';
 import { styles } from './index.css';
 import { property, state } from 'lit/decorators.js';
-import { vars } from '../styles/vars.css'
+import { vars } from '../styles/vars.css';
 
 import {
   dataIslandApp,
@@ -11,7 +11,12 @@ import {
   ChatAnswerType,
   Answer,
 } from '@neuralinnovations/dataisland-sdk';
-import { ChatModel, ClientSignature, StorageVars, TokenFromKey } from '../types';
+import {
+  ChatModel,
+  ClientSignature,
+  StorageVars,
+  TokenFromKey,
+} from '../types';
 
 import '../components/ChatHeader';
 import '../components/ChatButton';
@@ -41,19 +46,21 @@ class DataislandWidget extends LitElement {
   constructor() {
     super();
     this.clientSignature = null;
-    this.isChatInitialised = localStorage.getItem(StorageVars.userId) ? true : false;
+    this.isChatInitialised = localStorage.getItem(StorageVars.userId)
+      ? true
+      : false;
   }
 
   async connectedCallback() {
-    super.connectedCallback()
+    super.connectedCallback();
 
-    // to prevent inisialising user shoud pressed "get starged" button or alreadt has chat 
-    if (this.isChatInitialised) this.initializeChat()
+    // to prevent inisialising user shoud pressed "get starged" button or alreadt has chat
+    if (this.isChatInitialised) this.initializeChat();
   }
 
   private startChat() {
     this.isChatInitialised = true;
-    this.initializeChat()
+    this.initializeChat();
   }
 
   private generateClientSignature(): void {
@@ -62,10 +69,10 @@ class DataislandWidget extends LitElement {
       language: navigator.language,
       screenResolution: `${window.screen.width}x${window.screen.height}`,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    }
+    };
 
     let userId = localStorage.getItem(StorageVars.userId);
-    
+
     if (!userId) {
       userId = crypto.randomUUID();
       localStorage.setItem(StorageVars.userId, userId);
@@ -74,45 +81,50 @@ class DataislandWidget extends LitElement {
     this.clientSignature = {
       userId,
       userName: 'Anonymous',
-      userMetadata: Object.values(userMetadata).join()
-    }
+      userMetadata: Object.values(userMetadata).join(),
+    };
   }
 
-  async createChat () {
+  async createChat() {
     // create new chat if no chats
-    const {current} = this.sdk?.organizations!;
-    const currentChats = this.sdk?.organizations.get(current)?.chats.collection;
+    const currentOrgId = this.sdk?.organizations?.current ?? ''; 
+
+    if (!currentOrgId) return
+    
+    const currentChats = this.sdk?.organizations.get(currentOrgId)?.chats.collection;
 
     if (currentChats?.length) {
-      this.chat = currentChats[0]
-      const messages = await this.getMessagesDialog(this.chat.id) as Answer[]
-      console.log('messages', messages)
+      this.chat = currentChats[0];
+      const messages = (await this.getMessagesDialog(this.chat.id)) as Answer[];
+      console.log('messages', messages);
     } else {
-      const { current } = this.sdk?.organizations!
-      const chat = await this.sdk?.organizations.get(current).chats.create(ChatModel.Dataisland, '')
+      const currentOrgId = this.sdk?.organizations.current ?? '';
+      const chat = await this.sdk?.organizations
+        .get(currentOrgId)
+        .chats.create(ChatModel.Dataisland, '');
       this.chat = chat || null;
     }
   }
 
-  async initializeChat () {
-    this.generateClientSignature()
-    
-    const {apiKey, apiUrl, clientSignature} = this;
+  async initializeChat() {
+    this.generateClientSignature();
+
+    const { apiKey, apiUrl, clientSignature } = this;
     this.tokenFromKey = await getTokenFromKey(
       apiUrl,
       apiKey,
       clientSignature!.userId,
       clientSignature!.userName,
       clientSignature!.userMetadata
-    )
+    );
 
-    this.initializeSdk()
+    this.initializeSdk();
   }
 
-  async initializeSdk () {
+  async initializeSdk() {
     if (this.apiUrl && this.tokenFromKey) {
       try {
-        const {authSchemaName, userJwtToken} = this.tokenFromKey;
+        const { authSchemaName, userJwtToken } = this.tokenFromKey;
 
         this.sdk = await dataIslandApp('dataisland-client', async (builder) => {
           builder.useHost(this.apiUrl);
@@ -121,9 +133,9 @@ class DataislandWidget extends LitElement {
           );
         });
 
-        console.log('this.sdk', this.sdk)
+        console.log('this.sdk', this.sdk);
 
-        this.createChat()
+        this.createChat();
       } catch (error) {
         console.error('Failed to initialize SDK:', error);
       }
@@ -137,18 +149,21 @@ class DataislandWidget extends LitElement {
   }
 
   private sendQuestionMessage() {
-    this.messageLoading = true
-    this.messages = [...this.messages,  {
-      question: this.message,
-      status: 0,
-      id: String(Date.now()),
-    }]
+    this.messageLoading = true;
+    this.messages = [
+      ...this.messages,
+      {
+        question: this.message,
+        status: 0,
+        id: String(Date.now()),
+      },
+    ];
   }
 
   private async handleSendMessage() {
-    if (!this.chat || this.message.trim() === '') return
+    if (!this.chat || this.message.trim() === '') return;
 
-    this.sendQuestionMessage()
+    this.sendQuestionMessage();
 
     try {
       const answer = await this.chat.ask(this.message, ChatAnswerType.SHORT);
@@ -156,11 +171,10 @@ class DataislandWidget extends LitElement {
       answer?.subscribe(async (event) => {
         this.updateAnswer(event.data);
         if (this.messageLoading) this.messageLoading = false;
-        console.log('event.data', event.data)
-    });
+        console.log('event.data', event.data);
+      });
 
-    console.log(this.messages)
-
+      console.log(this.messages);
     } catch (error) {
       console.error('Failed to ask in chat:', error);
     } finally {
@@ -171,52 +185,54 @@ class DataislandWidget extends LitElement {
   updateAnswer = (answerData: any) => {
     const updatedMessages = [...this.messages];
     const lastMessageIndex = updatedMessages.length - 1;
-    updatedMessages[lastMessageIndex] = {...answerData};
+    updatedMessages[lastMessageIndex] = { ...answerData };
     this.messages = updatedMessages;
   };
 
-
-  async getMessagesDialog (id: string): Promise<any | undefined> {
+  async getMessagesDialog(id: string): Promise<any | undefined> {
     if (!this.chat) {
-      console.log('no chat', this.chat)
-      return
+      console.log('no chat', this.chat);
+      return;
     }
 
     try {
-        this.messageLoading = true;
+      this.messageLoading = true;
 
-        const { current } = this.sdk?.organizations!;
-        const messages = this.sdk?.organizations.get(current).chats.get(id).collection as Answer[];
+      const currentOrgId = this.sdk?.organizations.current ?? '';
+      const messages = this.sdk?.organizations.get(currentOrgId).chats.get(id)
+        .collection as Answer[];
 
-        if (!messages) return
+      if (!messages) return;
 
-        this.messages = messages
-        return messages;
+      this.messages = messages;
+      return messages;
     } catch (e: any) {
-        console.log('error', e)
+      console.log('error', e);
     } finally {
-        this.messageLoading = false
+      this.messageLoading = false;
     }
-  };
+  }
 
   render() {
     return html`
       <div class="dataisland-widget">
-  
-        ${!this.isChatOpen ? html`
-          <chat-button .buttonImageUrl="${this.buttonImageUrl}" @toggle-chat="${this.toggleChat}"></chat-button>
-        ` : null}
-        
-               <!-- TODO: Make as slot -->
-        <div class="dataisland-widget__popup ${this.isChatOpen ? 'open' : ''}">
-          <chat-header 
-            .title="${this.title}"
-            @toggle-chat="${this.toggleChat}"
-          >
+        ${!this.isChatOpen
+          ? html`
+              <chat-button
+                .buttonImageUrl="${this.buttonImageUrl}"
+                @toggle-chat="${this.toggleChat}"
+              ></chat-button>
+            `
+          : null}
+
+        <div
+          class="dataisland-widget__wrapper ${this.isChatOpen ? 'open' : ''}"
+        >
+          <chat-header .title="${this.title}" @toggle-chat="${this.toggleChat}">
           </chat-header>
-      
-          <chat-messages 
-            .messages="${this.messages}" 
+
+          <chat-messages
+            .messages="${this.messages}"
             .loading="${this.messageLoading}"
           >
           </chat-messages>

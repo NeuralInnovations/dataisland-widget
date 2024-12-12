@@ -1,8 +1,8 @@
 import { LitElement, html } from 'lit';
-import { styles } from './index.css'
+import { styles } from './index.css';
 
 class LoadingSpinner extends LitElement {
-  static styles = styles
+  static styles = styles;
 
   render() {
     return html`

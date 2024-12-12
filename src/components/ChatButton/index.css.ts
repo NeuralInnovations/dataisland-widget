@@ -25,7 +25,7 @@ export const styles = css`
   }
 
   .dataisland-widget-button img {
-    width: 90%
+    width: 90%;
   }
 
   .dataisland-widget-button:hover {
