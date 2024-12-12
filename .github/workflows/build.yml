@@ -31,8 +31,8 @@ jobs:
           NAME=$(jq -r '.name' package.json)
           VERSION=$(jq -r '.version' package.json)
 
-          echo "name=$NAME" >> $GITHUB_ENV
-          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       #------------------------------------------------------------
       - name: 📥 Info 📥
