@@ -8,7 +8,9 @@ on:
     types:
       - closed
   workflow_dispatch:
-
+env:
+  S3_BUCKET_NAME: "cdn.widget.dataisland.app"
+  
 jobs:
   #----------------------------------------------------------------
   prepare:
@@ -85,13 +87,29 @@ jobs:
           path: ./dist/dataisland-widget.js
       #------------------------------------------------------------
       #------------------------------------------------------------
-      - name: Commit and Push
+      - run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
+      - run: aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: aws configure set region ${{ secrets.AWS_S3_REGION }}
+      #------------------------------------------------------------
+      - name: AWS copy to S3 as root
         run: |
-          git config --global user.email "info@ni.solutions"
-          git config --global user.name "dataisland"
-          git add ./dist/dataisland-widget.js --force
-          git commit -m "dataisland-widget.js@${{ needs.prepare.outputs.version }}-${{ needs.prepare.outputs.build }}"
-          git push
+          SRC_PATH=./dist/dataisland-widget.js
+          BUCKET_NAME=${{ env.S3_BUCKET_NAME }}
+          VERSION=${{ steps.project.outputs.version }}
+          FULL_VERSION=${{ steps.project.outputs.version }}-${{ github.run_number }}
+          MAJOR_VERSION=$(echo $VERSION | cut -d. -f1)
+
+          aws s3 rm s3://$BUCKET_NAME/latest --recursive
+          aws s3 rm s3://$BUCKET_NAME/$MAJOR_VERSION --recursive
+          aws s3 rm s3://$BUCKET_NAME/$VERSION --recursive
+
+          aws s3 cp $SRC_PATH s3://$BUCKET_NAME/latest/dataisland-widget.js --content-encoding "application/javascript"
+          aws s3 cp $SRC_PATH s3://$BUCKET_NAME/$VERSION/dataisland-widget.js --content-encoding "application/javascript"
+          aws s3 cp $SRC_PATH s3://$BUCKET_NAME/$FULL_VERSION/dataisland-widget.js --content-encoding "application/javascript"
+      #------------------------------------------------------------
+      - name: AWS cloudfront
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
       #------------------------------------------------------------
 
   release:
