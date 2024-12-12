@@ -95,16 +95,18 @@ jobs:
         run: |
           SRC_PATH=./dist/dataisland-widget.js
           BUCKET_NAME=${{ env.S3_BUCKET_NAME }}
-          VERSION=${{ steps.project.outputs.version }}
-          FULL_VERSION=${{ steps.project.outputs.version }}-${{ github.run_number }}
+          VERSION=${{ needs.prepare.outputs.version }}
+          FULL_VERSION=${{ needs.prepare.outputs.version }}-${{ needs.prepare.outputs.build }}
           MAJOR_VERSION=$(echo $VERSION | cut -d. -f1)
 
           aws s3 rm s3://$BUCKET_NAME/latest --recursive
-          aws s3 rm s3://$BUCKET_NAME/$MAJOR_VERSION --recursive
           aws s3 rm s3://$BUCKET_NAME/$VERSION --recursive
+          aws s3 rm s3://$BUCKET_NAME/$MAJOR_VERSION --recursive
+          aws s3 rm s3://$BUCKET_NAME/$FULL_VERSION --recursive
 
           aws s3 cp $SRC_PATH s3://$BUCKET_NAME/latest/dataisland-widget.js --content-encoding "application/javascript"
           aws s3 cp $SRC_PATH s3://$BUCKET_NAME/$VERSION/dataisland-widget.js --content-encoding "application/javascript"
+          aws s3 cp $SRC_PATH s3://$BUCKET_NAME/$MAJOR_VERSION/dataisland-widget.js --content-encoding "application/javascript"
           aws s3 cp $SRC_PATH s3://$BUCKET_NAME/$FULL_VERSION/dataisland-widget.js --content-encoding "application/javascript"
       #------------------------------------------------------------
       - name: AWS cloudfront
