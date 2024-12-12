@@ -1,15 +1,21 @@
-name: Build
+name: Release
 permissions:
   contents: write
 on:
-  push:
+  pull_request:
     branches:
       - master
+    types:
+      - closed
   workflow_dispatch:
 
 jobs:
   #----------------------------------------------------------------
   prepare:
+    name: Prepare
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -76,6 +82,13 @@ jobs:
           name: dataisland-widget
           path: ./dist/dataisland-widget.js
       #------------------------------------------------------------
+      #------------------------------------------------------------
+      - name: Commit and Push
+        run: |
+          git add ./dist/dataisland-widget.js --force
+          git commit -m "dataisland-widget.js@${{ needs.prepare.outputs.version }}-${{ needs.prepare.outputs.build }}"
+          git push
+      #------------------------------------------------------------
 
   release:
     name: 🚀 Release 🚀
@@ -83,7 +96,6 @@ jobs:
     needs:
       - prepare
       - build
-    if: ${{ github.ref == 'refs/heads/master' }}
     steps:
       #------------------------------------------------------------
       - name: Download artifact
