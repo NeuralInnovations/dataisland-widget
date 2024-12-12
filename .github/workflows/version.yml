@@ -11,22 +11,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      #------------------------------------------------------------
       - name: Checkout base branch (master)
         uses: actions/checkout@v4
         with:
           ref: ${{ github.base_ref }}
-
+      #------------------------------------------------------------
       - name: Get version from base branch
         run: echo "BASE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
-
+      #------------------------------------------------------------
       - name: Checkout head branch (PR)
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-
+      #------------------------------------------------------------
       - name: Get version from head branch
         run: echo "HEAD_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
-
+      #------------------------------------------------------------
       - name: Compare versions
         run: |
           echo "BASE_VERSION=${{ env.BASE_VERSION }}"
@@ -42,3 +43,4 @@ jobs:
           else
             echo "Version in PR is higher than the base branch. Proceeding with the workflow."
           fi
+      #------------------------------------------------------------
