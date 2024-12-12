@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "release_create": "./scripts/release_create.sh",
+    "release_status": "./scripts/release_status.sh",
+    "release_merge": "./scripts/release_merge.sh"
   },
   "dependencies": {
     "@lit/localize": "^0.12.2",
