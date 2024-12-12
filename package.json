@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "lint": "echo 'Not implemented yet'",
     "lint:fix": "echo 'Not implemented yet'",
+    "docs": "echo 'Not implemented yet'",
     "release_create": "./scripts/release_create.sh",
     "release_status": "./scripts/release_status.sh",
     "release_merge": "./scripts/release_merge.sh"
