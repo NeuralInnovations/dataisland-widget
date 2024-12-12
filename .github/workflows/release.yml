@@ -87,6 +87,8 @@ jobs:
       #------------------------------------------------------------
       - name: Commit and Push
         run: |
+          git config --global user.email "info@ni.solutions"
+          git config --global user.name "dataisland"
           git add ./dist/dataisland-widget.js --force
           git commit -m "dataisland-widget.js@${{ needs.prepare.outputs.version }}-${{ needs.prepare.outputs.build }}"
           git push
