@@ -4,7 +4,7 @@ export const styles = css`
   :host {
     height: 100%;
   }
-  
+
   .dataisland-widget__placeholder {
     display: flex;
     flex-direction: column;

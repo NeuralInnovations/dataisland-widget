@@ -1,29 +1,31 @@
 import { LitElement, html } from 'lit';
 import { property } from 'lit/decorators.js';
-import { styles } from './index.css'
-import {msg} from '@lit/localize';
+import { styles } from './index.css';
+import { msg } from '@lit/localize';
 
 class ChatInput extends LitElement {
   @property({ type: String }) message: string = '';
   @property({ type: Boolean }) isChatInitialised: boolean = false;
 
-  static styles = styles
+  static styles = styles;
 
   private handleInput(e: Event) {
     this.message = (e.target as HTMLTextAreaElement).value;
-    this.dispatchEvent(new CustomEvent('message-input', { detail: this.message }));
+    this.dispatchEvent(
+      new CustomEvent('message-input', { detail: this.message })
+    );
   }
 
   private handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'Enter') {
-        if (e.shiftKey || e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          this.sendMessage()
-        } else {
-          e.preventDefault();
-          this.sendMessage()
-        }
+      if (e.shiftKey || e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        this.sendMessage();
+      } else {
+        e.preventDefault();
+        this.sendMessage();
       }
+    }
   }
 
   private sendMessage() {
@@ -44,7 +46,9 @@ class ChatInput extends LitElement {
               <button @click="${this.sendMessage}">Send</button>
             `
           : html`
-              <button @click="${() => this.dispatchEvent(new Event('start-chat'))}">
+              <button
+                @click="${() => this.dispatchEvent(new Event('start-chat'))}"
+              >
                 ${msg('Get started')}
               </button>
             `}

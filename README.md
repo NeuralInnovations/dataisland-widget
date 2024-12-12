@@ -15,17 +15,18 @@ Add the following `<script>` tag before closing head tag to your HTML file to co
 #### Step 2: Add the widget HTML code
 
 Also before closing body tag, add the following element (the order of arrangement does not matter):
+
 ```
-<dataisland-widget 
+<dataisland-widget
 	lang="ua"
-	theme="dark" 
-	welcomeMessage="Welcome!"
+	theme="dark"
 	apiUrl="apiUrl"
 	apiKey="apiKey"
  ></dataisland-widget>
 ```
 
 #### Example of final HTML code
+
 ```
 <!DOCTYPE html>
 <html lang="en">
@@ -37,10 +38,9 @@ Also before closing body tag, add the following element (the order of arrangemen
   </head>
   <body>
     <h1>Example</h1>
-  	<dataisland-widget 
+  	<dataisland-widget
 		lang="ua"
-		theme="dark" 
-		welcomeMessage="Welcome!"
+		theme="dark"
 		apiUrl="apiUrl"
 		apiKey="apiKey"
   	></dataisland-widget>
@@ -49,6 +49,7 @@ Also before closing body tag, add the following element (the order of arrangemen
 ```
 
 ### 2. Widget attributes
+
 **apiUrl (required)**: URL of your API server.
 **apiKey (required)**: Authorization token required to work with the API.
 
@@ -57,6 +58,7 @@ Also before closing body tag, add the following element (the order of arrangemen
 #### Customizing styles
 
 You can customize the appearance of the widget by adding CSS variables to the global styles:
+
 ```
 dataisland-widget {
   --border-color: #000;
@@ -69,13 +71,14 @@ dataisland-widget {
 - `--border-color`: widget border color.
 - `--background-color`: widget background color.
 
-
 ### 4. Important points
+
 - **Compatibility**: The widget works in all modern browsers that support Web Components.
 - **Initialization**: Make sure that the api-url and access-token attributes are passed correctly for successful SDK initialization.
 - **Updates**: If the widget is updated on the server, your integration will automatically pull the new version (if using CDN).
 
 ### 5. Help
+
 If you have any questions or problems with the integration, please contact our support team:
 
 - Email: support@example.com
