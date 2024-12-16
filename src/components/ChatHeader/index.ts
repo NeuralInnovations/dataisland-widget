@@ -1,15 +1,31 @@
 import { LitElement, html } from 'lit';
 import { styles } from './index.css';
 import { property } from 'lit/decorators.js';
+import { button } from '../../styles/components/chat-button.css';
 
 export class ChatHeader extends LitElement {
   @property({ type: String }) title!: '';
 
-  static styles = styles;
+  static styles = [button, styles];
 
   render() {
     return html` <div class="dataisland-widget-header">
-      <h1 class="dataisland-widget-header__title">${this.title}</h1>
+      <div class="dataisland-widget-header__inner">
+        <!-- <button 
+          class="dataisland-widget-header__button"
+          @click="${() => this.dispatchEvent(new Event('last-chat'))}"
+        >
+          ${'Last chat'}
+        </button> -->
+        <h1 class="dataisland-widget-header__title">${this.title}</h1>
+        <button
+          class="dataisland-widget-header__button"
+          @click="${() => this.dispatchEvent(new Event('new-chat'))}"
+        >
+          ${'New chat'}
+        </button>
+      </div>
+
       <div
         class="dataisland-widget-header__close"
         @click="${() => this.dispatchEvent(new Event('toggle-chat'))}"

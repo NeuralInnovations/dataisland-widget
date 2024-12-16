@@ -4,6 +4,7 @@
     "module": "ES2022",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
     "useDefineForClassFields": false,
@@ -26,3 +27,11 @@
   },
   "include": ["src"]
 }
+
+// "target": "es2017",
+// "module": "es2015",
+// "moduleResolution": "node",
+// "lib": ["es2017", "dom"],
+
+
+// "experimentalDecorators": true

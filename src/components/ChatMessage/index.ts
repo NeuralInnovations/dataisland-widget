@@ -5,7 +5,7 @@ import MarkdownIt from 'markdown-it';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 import '../ChatPlaceholder';
-import '../ChatLoader';
+import '../ChatMessageLoader';
 
 class ChatMessages extends LitElement {
   @property({ type: Array }) messages: any[] = [];
@@ -19,7 +19,10 @@ class ChatMessages extends LitElement {
   updated(changedProperties: Map<string, any>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('messages') || changedProperties.has('loading')) {
+    if (
+      (changedProperties.has('messages') || changedProperties.has('loading')) &&
+      this.messages.length
+    ) {
       this.scrollToBottom();
     }
   }
@@ -38,10 +41,12 @@ class ChatMessages extends LitElement {
           ? html`<chat-placeholder></chat-placeholder>`
           : this.messages.map((msg: any, i: number) => {
               return html`
-                <div class="messages__item">${msg.question}</div>
+                <div class="messages__item">${msg._question}</div>
 
                 ${this.loading && i === this.messages.length - 1
-                  ? html` <chat-loader></chat-loader> `
+                  ? html`<div class="messages__item">
+                      <chat-message-loader></chat-message-loader>
+                    </div>`
                   : html`
                       <div class="messages__item">
                         ${unsafeHTML(this.markdown.render(msg._answer))}

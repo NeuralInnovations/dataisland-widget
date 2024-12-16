@@ -13,10 +13,32 @@ export const styles = css`
   .dataisland-widget-header__title {
     flex-grow: 1;
     text-align: center;
+    font-size: 1rem;
+  }
+  .dataisland-widget-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    text-align: center;
     width: 100%;
     margin: 0;
     font-size: 1rem;
   }
+  .dataisland-widget-header__button {
+    border: none;
+    background: none;
+    text-decoration: underline;
+    flex-grow: 0;
+    flex-wrap: nowrap;
+    cursor: pointer;
+    color: var(--dataisland-widget-header-close-color);
+    transition: var(--dataisland-widget-color-transition);
+  }
+  .dataisland-widget-header__button:hover {
+    color: var(--dataisland-widget-header-close-color-hover);
+  }
+
   .dataisland-widget-header__close {
     color: var(--dataisland-widget-header-close-color);
     cursor: pointer;
