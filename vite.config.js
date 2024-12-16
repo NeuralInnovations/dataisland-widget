@@ -36,6 +36,7 @@ export default defineConfig(() => {
       open: true,
     },
     build: {
+      target: 'esnext',
       outDir,
       emptyOutDir: true,
       lib: {
