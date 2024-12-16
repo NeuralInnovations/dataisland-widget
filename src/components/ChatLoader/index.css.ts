@@ -12,6 +12,7 @@ export const styles = css`
     background-size: calc(100% / 3) 50%;
     animation: l3 1s infinite linear;
   }
+  
   @keyframes l3 {
     20% {
       background-position:
