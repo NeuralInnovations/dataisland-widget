@@ -8,8 +8,13 @@ export const vars = css`
 
     --input-height: 37px;
 
+    --dataisland-widget-transition-duration: 0.2s;
+
     --dataisland-widget-font-family: 'Roboto', sans-serif;
     --dataisland-widget-font-color: #333;
+
+    --dataisland-widget-color-transition: color
+      var(--dataisland-widget-transition-duration) ease-in-out;
 
     /* popup */
     --dataisland-widget-popup-border-radius: 10px;

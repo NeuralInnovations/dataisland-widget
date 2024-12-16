@@ -1,12 +1,14 @@
 /* eslint-disable no-undef */
 import { defineConfig } from 'vite';
 import env from 'vite-plugin-env-compatible';
+import { resolve } from 'path';
 
 // if (!import.meta.env.VITE_API_URL || !import.meta.env.VITE_API_KEY) {
 //   throw new Error(
 //     'Missing environment variables. Please set VITE_API_URL and VITE_API_KEY.'
 //   );
 // }
+const outDir = resolve(__dirname, 'dist');
 
 export default defineConfig(() => {
   // if (!import.meta.env.VITE_API_URL || !import.meta.env.VITE_API_KEY) {
@@ -34,10 +36,10 @@ export default defineConfig(() => {
       open: true,
     },
     build: {
-      outDir: '../dist',
+      outDir,
       emptyOutDir: true,
       lib: {
-        entry: 'main.ts',
+        entry: resolve(__dirname, 'src/main.ts'),
         name: 'ChatWidget',
         fileName: 'dataisland-widget',
         formats: ['es'],
