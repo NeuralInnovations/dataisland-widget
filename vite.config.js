@@ -21,7 +21,7 @@ export default defineConfig({
     outDir,
     emptyOutDir: true,
     lib: {
-      entry: resolve(__dirname, 'main.ts'),
+      entry: resolve(__dirname, 'src/main.ts'),
       name: 'DataislandWidget',
       fileName: 'dataisland-widget',
       formats: ['es'],
