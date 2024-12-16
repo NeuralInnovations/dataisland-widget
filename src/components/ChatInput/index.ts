@@ -2,12 +2,13 @@ import { LitElement, html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { styles } from './index.css';
 import { msg } from '@lit/localize';
+import { button } from '../../styles/components/chat-button.css';
 
 class ChatInput extends LitElement {
   @property({ type: String }) message: string = '';
   @property({ type: Boolean }) isChatInitialised: boolean = false;
 
-  static styles = styles;
+  static styles = [styles, button];
 
   private handleInput(e: Event) {
     this.message = (e.target as HTMLTextAreaElement).value;
@@ -42,11 +43,18 @@ class ChatInput extends LitElement {
                 @input="${this.handleInput}"
                 @keydown="${this.handleKeyDown}"
                 rows="1"
+                placeholder="ask any questions"
               ></textarea>
-              <button @click="${this.sendMessage}">Send</button>
+              <button
+                class="dataisland-widget-chat-button"
+                @click="${this.sendMessage}"
+              >
+                Send
+              </button>
             `
           : html`
               <button
+                class="dataisland-widget-chat-button"
                 @click="${() => this.dispatchEvent(new Event('start-chat'))}"
               >
                 ${msg('Get started')}
