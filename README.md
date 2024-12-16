@@ -19,7 +19,6 @@ Also before closing body tag, add the following element (the order of arrangemen
 ```
 <dataisland-widget
 	lang="ua"
-	theme="dark"
 	apiUrl="apiUrl"
 	apiKey="apiKey"
  ></dataisland-widget>
@@ -40,7 +39,6 @@ Also before closing body tag, add the following element (the order of arrangemen
     <h1>Example</h1>
   	<dataisland-widget
 		lang="ua"
-		theme="dark"
 		apiUrl="apiUrl"
 		apiKey="apiKey"
   	></dataisland-widget>

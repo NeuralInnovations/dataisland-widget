@@ -26,14 +26,19 @@ import '../components/ChatPlaceholder';
 import { getTokenFromKey } from '../utils/api';
 
 class DataislandWidget extends LitElement {
-  @property({ type: String }) apiKey!: string;
-  @property({ type: String }) apiUrl!: string;
+  @property({ type: String }) apiKey: string = "";
+  @property({ type: String }) apiUrl: string = "";
   @property({ type: String }) buttonImageUrl = '../assets/dataisland-logo.svg';
   @property({ type: String }) title = 'Dataisland Chat';
 
+  // private apiUrl = import.meta.env.VITE_API_URL;
+  // private apiKey = import.meta.env.VITE_API_KEY;
+
+  // @state() private apiKey: string = "";
+  // @state() private apiUrl: string = ""
   @state() private message: string = '';
   @state() private messages: any[] = []; // Answer[]
-  @state() private isChatOpen: boolean = false;
+  @state() private isChatOpen: boolean = true;
   @state() private sdk: DataIslandApp | null = null;
   @state() private clientSignature: ClientSignature | null;
   @state() private tokenFromKey: TokenFromKey | null = null;
@@ -42,6 +47,13 @@ class DataislandWidget extends LitElement {
   @state() private messageLoading: boolean = false;
 
   static styles = [vars, styles];
+
+  private computedApiUrl(): string {
+    return this.apiUrl ? this.apiUrl : import.meta.env.VITE_API_URL
+  }
+  private computedApiKey(): string {
+    return this.apiKey ? this.apiKey : import.meta.env.VITE_API_KEY 
+  }
 
   constructor() {
     super();
@@ -54,7 +66,6 @@ class DataislandWidget extends LitElement {
   async connectedCallback() {
     super.connectedCallback();
 
-    // to prevent inisialising user shoud pressed "get starged" button or alreadt has chat
     if (this.isChatInitialised) this.initializeChat();
   }
 
@@ -86,7 +97,6 @@ class DataislandWidget extends LitElement {
   }
 
   async createChat() {
-    // create new chat if no chats
     const currentOrgId = this.sdk?.organizations?.current ?? ''; 
 
     if (!currentOrgId) return
@@ -95,8 +105,6 @@ class DataislandWidget extends LitElement {
 
     if (currentChats?.length) {
       this.chat = currentChats[0];
-      const messages = (await this.getMessagesDialog(this.chat.id)) as Answer[];
-      console.log('messages', messages);
     } else {
       const currentOrgId = this.sdk?.organizations.current ?? '';
       const chat = await this.sdk?.organizations
@@ -107,12 +115,13 @@ class DataislandWidget extends LitElement {
   }
 
   async initializeChat() {
+    console.log('initializeChat')
     this.generateClientSignature();
 
-    const { apiKey, apiUrl, clientSignature } = this;
+    const { clientSignature } = this;
     this.tokenFromKey = await getTokenFromKey(
-      apiUrl,
-      apiKey,
+      this.computedApiUrl(),
+      this.computedApiKey(),
       clientSignature!.userId,
       clientSignature!.userName,
       clientSignature!.userMetadata
@@ -122,12 +131,12 @@ class DataislandWidget extends LitElement {
   }
 
   async initializeSdk() {
-    if (this.apiUrl && this.tokenFromKey) {
+    if (this.computedApiUrl && this.tokenFromKey) {
       try {
         const { authSchemaName, userJwtToken } = this.tokenFromKey;
 
         this.sdk = await dataIslandApp('dataisland-client', async (builder) => {
-          builder.useHost(this.apiUrl);
+          builder.useHost(this.computedApiUrl());
           builder.useCredential(
             new CustomCredential(authSchemaName, userJwtToken)
           );
@@ -153,7 +162,7 @@ class DataislandWidget extends LitElement {
     this.messages = [
       ...this.messages,
       {
-        question: this.message,
+        _question: this.message,
         status: 0,
         id: String(Date.now()),
       },
