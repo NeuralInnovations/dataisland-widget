@@ -1,5 +1,6 @@
 import { LitElement, html } from 'lit';
 import { styles } from './index.css';
+import logoSecondary from '../../assets/dataisland-logo-secondary.svg';
 
 export class ChatPlaceholder extends LitElement {
   static styles = styles;
@@ -9,10 +10,11 @@ export class ChatPlaceholder extends LitElement {
       <div class="dataisland-widget__placeholder">
         <img
           class="dataisland-widget__placeholder-img"
-          src="../../assets/dataisland-logo-secondary.svg"
+          src="${logoSecondary}"
+          alt="logo"
         />
         <p class="dataisland-widget__placeholder-text">
-          Я готов ответить на ваши вопросы
+          Я готовий відповісти на ваші питання
         </p>
       </div>
     `;

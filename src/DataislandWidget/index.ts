@@ -12,8 +12,8 @@ import {
   Answer,
 } from '@neuralinnovations/dataisland-sdk';
 import {
-  ChatModel,
   ClientSignature,
+  CreateChatMode,
   StorageVars,
   TokenFromKey,
 } from '../types';
@@ -23,27 +23,25 @@ import '../components/ChatButton';
 import '../components/ChatInput';
 import '../components/ChatMessage';
 import '../components/ChatPlaceholder';
+import logo from '../assets/dataisland-logo.svg';
 import { getTokenFromKey } from '../utils/api';
+import { createChat, getChats } from '../utils/chat';
 
 class DataislandWidget extends LitElement {
   @property({ type: String }) apiKey: string = "";
   @property({ type: String }) apiUrl: string = "";
-  @property({ type: String }) buttonImageUrl = '../assets/dataisland-logo.svg';
+  @property({ type: String }) buttonImageUrl = logo;
   @property({ type: String }) title = 'Dataisland Chat';
 
-  // private apiUrl = import.meta.env.VITE_API_URL;
-  // private apiKey = import.meta.env.VITE_API_KEY;
-
-  // @state() private apiKey: string = "";
-  // @state() private apiUrl: string = ""
   @state() private message: string = '';
-  @state() private messages: any[] = []; // Answer[]
-  @state() private isChatOpen: boolean = true;
+  @state() private messages: any[] = [];
+  @state() private isChatOpen: boolean = false;
   @state() private sdk: DataIslandApp | null = null;
   @state() private clientSignature: ClientSignature | null;
   @state() private tokenFromKey: TokenFromKey | null = null;
   @state() private isChatInitialised: boolean | false = false;
   @state() private chat: Chat | null = null;
+  @state() private chats: Chat[] | null = null;
   @state() private messageLoading: boolean = false;
 
   static styles = [vars, styles];
@@ -65,7 +63,6 @@ class DataislandWidget extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
-
     if (this.isChatInitialised) this.initializeChat();
   }
 
@@ -96,22 +93,27 @@ class DataislandWidget extends LitElement {
     };
   }
 
-  async createChat() {
-    const currentOrgId = this.sdk?.organizations?.current ?? ''; 
 
-    if (!currentOrgId) return
-    
-    const currentChats = this.sdk?.organizations.get(currentOrgId)?.chats.collection;
+  async createChatHandler(mode: CreateChatMode) {    
+    const chats = getChats(this.sdk);
+    this.chats = chats as Chat[];
 
-    if (currentChats?.length) {
-      this.chat = currentChats[0];
-    } else {
-      const currentOrgId = this.sdk?.organizations.current ?? '';
-      const chat = await this.sdk?.organizations
-        .get(currentOrgId)
-        .chats.create(ChatModel.Dataisland, '');
-      this.chat = chat || null;
+    if (mode === CreateChatMode.initial) {
+      if (chats?.length) {
+        this.chat = chats[0];
+      } else {
+        this.chat = await createChat(this.sdk)
+        return
+      }
+    } else if (mode === CreateChatMode.new) {
+      this.chat = await createChat(this.sdk)
+      return
     }
+  }
+
+  async revertChat() {
+    const chats = getChats(this.sdk);
+    console.log(chats)
   }
 
   async initializeChat() {
@@ -144,7 +146,7 @@ class DataislandWidget extends LitElement {
 
         console.log('this.sdk', this.sdk);
 
-        this.createChat();
+        this.createChatHandler(CreateChatMode.initial);
       } catch (error) {
         console.error('Failed to initialize SDK:', error);
       }
@@ -237,7 +239,13 @@ class DataislandWidget extends LitElement {
         <div
           class="dataisland-widget__wrapper ${this.isChatOpen ? 'open' : ''}"
         >
-          <chat-header .title="${this.title}" @toggle-chat="${this.toggleChat}">
+          <chat-header 
+            .title="${this.title}" 
+            .showLastChatButton="${!!this.chats && this.chats?.length > 1}"
+            @last-chat="${this.revertChat}"
+            @new-chat="${() => this.createChatHandler(CreateChatMode.new)}"
+            @toggle-chat="${this.toggleChat}"
+          >
           </chat-header>
 
           <chat-messages
