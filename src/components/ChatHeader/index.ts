@@ -12,18 +12,22 @@ export class ChatHeader extends LitElement {
   render() {
     return html` <div class="dataisland-widget-header">
       <div class="dataisland-widget-header__inner">
-        ${this.showLastChatButton ? html`
-            <button 
-              class="dataisland-widget-header__button"
-              @click="${() => this.dispatchEvent(new Event('last-chat'))}"
-            >
-              ${'Last chat'}
-            </button>
-        ` : null}
+        ${this.showLastChatButton
+          ? html`
+              <button
+                class="dataisland-widget-header__button"
+                @click="${() => this.dispatchEvent(new Event('last-chat'))}"
+                title="Will revert to the previous chat"
+              >
+                ${'Prev. chat'}
+              </button>
+            `
+          : null}
         <h1 class="dataisland-widget-header__title">${this.title}</h1>
         <button
           class="dataisland-widget-header__button"
           @click="${() => this.dispatchEvent(new Event('new-chat'))}"
+          title="The previous chat will be deleted after creating a new one"
         >
           ${'New chat'}
         </button>

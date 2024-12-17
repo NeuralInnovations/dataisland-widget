@@ -23,13 +23,13 @@ import '../components/ChatButton';
 import '../components/ChatInput';
 import '../components/ChatMessage';
 import '../components/ChatPlaceholder';
-import logo from '../assets/dataisland-logo.svg';
+import logo from '../../public/dataisland-logo.svg';
 import { getTokenFromKey } from '../utils/api';
-import { createChat, getChats } from '../utils/chat';
+import { createChat, deleteChat, getChats } from '../utils/chat';
 
 class DataislandWidget extends LitElement {
-  @property({ type: String }) apiKey: string = "";
-  @property({ type: String }) apiUrl: string = "";
+  @property({ type: String }) apiKey: string = '';
+  @property({ type: String }) apiUrl: string = '';
   @property({ type: String }) buttonImageUrl = logo;
   @property({ type: String }) title = 'Dataisland Chat';
 
@@ -47,10 +47,10 @@ class DataislandWidget extends LitElement {
   static styles = [vars, styles];
 
   private computedApiUrl(): string {
-    return this.apiUrl ? this.apiUrl : import.meta.env.VITE_API_URL
+    return this.apiUrl ? this.apiUrl : import.meta.env.VITE_API_URL;
   }
   private computedApiKey(): string {
-    return this.apiKey ? this.apiKey : import.meta.env.VITE_API_KEY 
+    return this.apiKey ? this.apiKey : import.meta.env.VITE_API_KEY;
   }
 
   constructor() {
@@ -93,8 +93,7 @@ class DataislandWidget extends LitElement {
     };
   }
 
-
-  async createChatHandler(mode: CreateChatMode) {    
+  async createChatHandler(mode: CreateChatMode) {
     const chats = getChats(this.sdk);
     this.chats = chats as Chat[];
 
@@ -102,22 +101,37 @@ class DataislandWidget extends LitElement {
       if (chats?.length) {
         this.chat = chats[0];
       } else {
-        this.chat = await createChat(this.sdk)
-        return
+        this.chat = await createChat(this.sdk);
       }
     } else if (mode === CreateChatMode.new) {
-      this.chat = await createChat(this.sdk)
-      return
+      const prevChat = this.getPrevChat();
+
+      if (!prevChat) throw Error('No previous chat.');
+
+      await deleteChat(this.sdk, prevChat.id);
+      this.chat = await createChat(this.sdk);
     }
+
+    if (this.chat) (await this.getMessagesDialog(this.chat.id)) as Answer[];
+
+    console.log('this.chats', this.chats);
+  }
+
+  getPrevChat(): Chat | null {
+    return this.chats?.filter((chat) => chat.id !== this.chat?.id)[0] ?? null;
   }
 
   async revertChat() {
-    const chats = getChats(this.sdk);
-    console.log(chats)
+    const lasChat = this.getPrevChat();
+    if (!lasChat) throw Error('no lastChat');
+
+    this.chat = lasChat;
+    this.getMessagesDialog(lasChat.id);
+    console.log('lasChat', lasChat);
   }
 
   async initializeChat() {
-    console.log('initializeChat')
+    console.log('initializeChat');
     this.generateClientSignature();
 
     const { clientSignature } = this;
@@ -200,7 +214,7 @@ class DataislandWidget extends LitElement {
     this.messages = updatedMessages;
   };
 
-  async getMessagesDialog(id: string): Promise<any | undefined> {
+  async getMessagesDialog(chatId: string): Promise<any | undefined> {
     if (!this.chat) {
       console.log('no chat', this.chat);
       return;
@@ -210,8 +224,9 @@ class DataislandWidget extends LitElement {
       this.messageLoading = true;
 
       const currentOrgId = this.sdk?.organizations.current ?? '';
-      const messages = this.sdk?.organizations.get(currentOrgId).chats.get(id)
-        .collection as Answer[];
+      const messages = this.sdk?.organizations
+        .get(currentOrgId)
+        .chats.get(chatId).collection as Answer[];
 
       if (!messages) return;
 
@@ -239,8 +254,8 @@ class DataislandWidget extends LitElement {
         <div
           class="dataisland-widget__wrapper ${this.isChatOpen ? 'open' : ''}"
         >
-          <chat-header 
-            .title="${this.title}" 
+          <chat-header
+            .title="${this.title}"
             .showLastChatButton="${!!this.chats && this.chats?.length > 1}"
             @last-chat="${this.revertChat}"
             @new-chat="${() => this.createChatHandler(CreateChatMode.new)}"

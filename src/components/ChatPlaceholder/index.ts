@@ -1,6 +1,6 @@
 import { LitElement, html } from 'lit';
 import { styles } from './index.css';
-import logoSecondary from '../../assets/dataisland-logo-secondary.svg';
+import logoSecondary from '../../../public/dataisland-logo-secondary.svg';
 
 export class ChatPlaceholder extends LitElement {
   static styles = styles;

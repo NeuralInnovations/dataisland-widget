@@ -6,6 +6,7 @@ import { resolve } from 'path';
 const outDir = resolve(__dirname, 'dist');
 
 export default defineConfig({
+  base: '/',
   plugins: [
     env({
       prefix: 'VITE',

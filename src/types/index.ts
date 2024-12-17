@@ -20,5 +20,5 @@ export enum StorageVars {
 
 export enum CreateChatMode {
   initial = 'initiak',
-  new = 'new'
+  new = 'new',
 }
