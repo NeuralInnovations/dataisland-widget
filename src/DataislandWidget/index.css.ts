@@ -4,6 +4,7 @@ export const styles = css`
   :host {
     font-family: var(--dataisland-widget-font-family);
     color: var(--dataisland-widget-font-color);
+    z-index: 1000;
   }
 
   .dataisland-widget__wrapper {
