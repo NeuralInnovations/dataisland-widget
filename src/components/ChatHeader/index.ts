@@ -4,23 +4,30 @@ import { property } from 'lit/decorators.js';
 import { button } from '../../styles/components/chat-button.css';
 
 export class ChatHeader extends LitElement {
-  @property({ type: String }) title!: '';
+  @property({ type: String }) title = '';
+  @property({ type: Boolean }) showLastChatButton = false;
 
   static styles = [button, styles];
 
   render() {
     return html` <div class="dataisland-widget-header">
       <div class="dataisland-widget-header__inner">
-        <!-- <button 
-          class="dataisland-widget-header__button"
-          @click="${() => this.dispatchEvent(new Event('last-chat'))}"
-        >
-          ${'Last chat'}
-        </button> -->
+        ${this.showLastChatButton
+          ? html`
+              <button
+                class="dataisland-widget-header__button"
+                @click="${() => this.dispatchEvent(new Event('last-chat'))}"
+                title="Will revert to the previous chat"
+              >
+                ${'Prev. chat'}
+              </button>
+            `
+          : null}
         <h1 class="dataisland-widget-header__title">${this.title}</h1>
         <button
           class="dataisland-widget-header__button"
           @click="${() => this.dispatchEvent(new Event('new-chat'))}"
+          title="The previous chat will be deleted after creating a new one"
         >
           ${'New chat'}
         </button>

@@ -12,8 +12,8 @@ import {
   Answer,
 } from '@neuralinnovations/dataisland-sdk';
 import {
-  ChatModel,
   ClientSignature,
+  CreateChatMode,
   StorageVars,
   TokenFromKey,
 } from '../types';
@@ -23,36 +23,34 @@ import '../components/ChatButton';
 import '../components/ChatInput';
 import '../components/ChatMessage';
 import '../components/ChatPlaceholder';
+import logo from '../../public/dataisland-logo.svg';
 import { getTokenFromKey } from '../utils/api';
+import { createChat, deleteChat, getChats } from '../utils/chat';
 
 class DataislandWidget extends LitElement {
-  @property({ type: String }) apiKey: string = "";
-  @property({ type: String }) apiUrl: string = "";
-  @property({ type: String }) buttonImageUrl = '../assets/dataisland-logo.svg';
+  @property({ type: String }) apiKey: string = '';
+  @property({ type: String }) apiUrl: string = '';
+  @property({ type: String }) buttonImageUrl = logo;
   @property({ type: String }) title = 'Dataisland Chat';
 
-  // private apiUrl = import.meta.env.VITE_API_URL;
-  // private apiKey = import.meta.env.VITE_API_KEY;
-
-  // @state() private apiKey: string = "";
-  // @state() private apiUrl: string = ""
   @state() private message: string = '';
-  @state() private messages: any[] = []; // Answer[]
-  @state() private isChatOpen: boolean = true;
+  @state() private messages: any[] = [];
+  @state() private isChatOpen: boolean = false;
   @state() private sdk: DataIslandApp | null = null;
   @state() private clientSignature: ClientSignature | null;
   @state() private tokenFromKey: TokenFromKey | null = null;
   @state() private isChatInitialised: boolean | false = false;
   @state() private chat: Chat | null = null;
+  @state() private chats: Chat[] | null = null;
   @state() private messageLoading: boolean = false;
 
   static styles = [vars, styles];
 
   private computedApiUrl(): string {
-    return this.apiUrl ? this.apiUrl : import.meta.env.VITE_API_URL
+    return this.apiUrl ? this.apiUrl : import.meta.env.VITE_API_URL;
   }
   private computedApiKey(): string {
-    return this.apiKey ? this.apiKey : import.meta.env.VITE_API_KEY 
+    return this.apiKey ? this.apiKey : import.meta.env.VITE_API_KEY;
   }
 
   constructor() {
@@ -65,7 +63,6 @@ class DataislandWidget extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
-
     if (this.isChatInitialised) this.initializeChat();
   }
 
@@ -96,26 +93,45 @@ class DataislandWidget extends LitElement {
     };
   }
 
-  async createChat() {
-    const currentOrgId = this.sdk?.organizations?.current ?? ''; 
+  async createChatHandler(mode: CreateChatMode) {
+    const chats = getChats(this.sdk);
+    this.chats = chats as Chat[];
 
-    if (!currentOrgId) return
-    
-    const currentChats = this.sdk?.organizations.get(currentOrgId)?.chats.collection;
+    if (mode === CreateChatMode.initial) {
+      if (chats?.length) {
+        this.chat = chats[0];
+      } else {
+        this.chat = await createChat(this.sdk);
+      }
+    } else if (mode === CreateChatMode.new) {
+      const prevChat = this.getPrevChat();
 
-    if (currentChats?.length) {
-      this.chat = currentChats[0];
-    } else {
-      const currentOrgId = this.sdk?.organizations.current ?? '';
-      const chat = await this.sdk?.organizations
-        .get(currentOrgId)
-        .chats.create(ChatModel.Dataisland, '');
-      this.chat = chat || null;
+      if (!prevChat) throw Error('No previous chat.');
+
+      await deleteChat(this.sdk, prevChat.id);
+      this.chat = await createChat(this.sdk);
     }
+
+    if (this.chat) (await this.getMessagesDialog(this.chat.id)) as Answer[];
+
+    console.log('this.chats', this.chats);
+  }
+
+  getPrevChat(): Chat | null {
+    return this.chats?.filter((chat) => chat.id !== this.chat?.id)[0] ?? null;
+  }
+
+  async revertChat() {
+    const lasChat = this.getPrevChat();
+    if (!lasChat) throw Error('no lastChat');
+
+    this.chat = lasChat;
+    this.getMessagesDialog(lasChat.id);
+    console.log('lasChat', lasChat);
   }
 
   async initializeChat() {
-    console.log('initializeChat')
+    console.log('initializeChat');
     this.generateClientSignature();
 
     const { clientSignature } = this;
@@ -144,7 +160,7 @@ class DataislandWidget extends LitElement {
 
         console.log('this.sdk', this.sdk);
 
-        this.createChat();
+        this.createChatHandler(CreateChatMode.initial);
       } catch (error) {
         console.error('Failed to initialize SDK:', error);
       }
@@ -198,7 +214,7 @@ class DataislandWidget extends LitElement {
     this.messages = updatedMessages;
   };
 
-  async getMessagesDialog(id: string): Promise<any | undefined> {
+  async getMessagesDialog(chatId: string): Promise<any | undefined> {
     if (!this.chat) {
       console.log('no chat', this.chat);
       return;
@@ -208,8 +224,9 @@ class DataislandWidget extends LitElement {
       this.messageLoading = true;
 
       const currentOrgId = this.sdk?.organizations.current ?? '';
-      const messages = this.sdk?.organizations.get(currentOrgId).chats.get(id)
-        .collection as Answer[];
+      const messages = this.sdk?.organizations
+        .get(currentOrgId)
+        .chats.get(chatId).collection as Answer[];
 
       if (!messages) return;
 
@@ -237,7 +254,13 @@ class DataislandWidget extends LitElement {
         <div
           class="dataisland-widget__wrapper ${this.isChatOpen ? 'open' : ''}"
         >
-          <chat-header .title="${this.title}" @toggle-chat="${this.toggleChat}">
+          <chat-header
+            .title="${this.title}"
+            .showLastChatButton="${!!this.chats && this.chats?.length > 1}"
+            @last-chat="${this.revertChat}"
+            @new-chat="${() => this.createChatHandler(CreateChatMode.new)}"
+            @toggle-chat="${this.toggleChat}"
+          >
           </chat-header>
 
           <chat-messages

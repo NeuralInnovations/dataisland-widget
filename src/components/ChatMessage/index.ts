@@ -20,7 +20,8 @@ class ChatMessages extends LitElement {
     super.updated(changedProperties);
 
     if (
-      (changedProperties.has('messages') || changedProperties.has('loading')) &&
+      changedProperties.has('messages') ||
+      changedProperties.has('loading') ||
       this.messages.length
     ) {
       this.scrollToBottom();

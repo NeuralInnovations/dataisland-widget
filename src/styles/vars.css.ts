@@ -27,5 +27,8 @@ export const vars = css`
     /* header */
     --dataisland-widget-header-close-color: #9b9c9f;
     --dataisland-widget-header-close-color-hover: #cccdd0;
+
+    /* input */
+    --dataisland-widget-input-border-radius: 10px;
   }
 `;

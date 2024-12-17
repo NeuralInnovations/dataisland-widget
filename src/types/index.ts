@@ -17,3 +17,8 @@ export enum ChatModel {
 export enum StorageVars {
   userId = 'dataisland-widget-userId',
 }
+
+export enum CreateChatMode {
+  initial = 'initiak',
+  new = 'new',
+}
