@@ -106,9 +106,10 @@ class DataislandWidget extends LitElement {
     } else if (mode === CreateChatMode.new) {
       const prevChat = this.getPrevChat();
 
-      if (!prevChat) throw Error('No previous chat.');
+      if (prevChat) {
+        await deleteChat(this.sdk, prevChat.id);
+      }
 
-      await deleteChat(this.sdk, prevChat.id);
       this.chat = await createChat(this.sdk);
     }
 
