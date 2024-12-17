@@ -5,6 +5,10 @@ export const styles = css`
     flex-grow: 1;
     overflow-y: hidden;
 
+    p {
+      margin: 0;
+    }
+
     --padding: 10px;
   }
 

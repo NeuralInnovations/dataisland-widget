@@ -6,11 +6,10 @@ export const styles = css`
     align-items: center;
   }
 
-  /* TODO: vat(--radius) */
   .input-area textarea {
     flex-grow: 2;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: var(--dataisland-widget-input-border-radius);
     border: 1px solid #ddd;
     margin-right: 10px;
     font-family: inherit;

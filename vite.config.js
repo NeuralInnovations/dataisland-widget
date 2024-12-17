@@ -6,6 +6,7 @@ import { resolve } from 'path';
 const outDir = resolve(__dirname, 'dist');
 
 export default defineConfig({
+  base: '/',
   plugins: [
     env({
       prefix: 'VITE',
@@ -29,6 +30,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         format: 'esm',
+        assetFileNames: 'assets/[name].[hash][extname]',
       },
     },
     commonjsOptions: {
