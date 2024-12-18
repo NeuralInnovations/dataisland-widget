@@ -23,7 +23,7 @@ export const styles = css`
     transition: transform 0.3s ease;
     transform-origin: bottom right;
 
-    font-size: 0.8rem;
+    font-size: var(--dataisland-widget-font-size);
   }
 
   .dataisland-widget__wrapper.open {
