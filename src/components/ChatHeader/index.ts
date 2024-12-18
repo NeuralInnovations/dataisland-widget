@@ -19,7 +19,7 @@ export class ChatHeader extends LitElement {
                 @click="${() => this.dispatchEvent(new Event('last-chat'))}"
                 title="Will revert to the previous chat"
               >
-                ${'Prev. chat'}
+                ${'Назад'}
               </button>
             `
           : null}
@@ -29,7 +29,7 @@ export class ChatHeader extends LitElement {
           @click="${() => this.dispatchEvent(new Event('new-chat'))}"
           title="The previous chat will be deleted after creating a new one"
         >
-          ${'New chat'}
+          ${'Новий чат'}
         </button>
       </div>
 

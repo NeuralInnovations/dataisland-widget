@@ -13,7 +13,7 @@ export const styles = css`
   .dataisland-widget-header__title {
     flex-grow: 1;
     text-align: center;
-    font-size: 1rem;
+    font-size: var(--dataisland-widget-header-title-font-size);
   }
   .dataisland-widget-header__inner {
     display: flex;
@@ -34,6 +34,7 @@ export const styles = css`
     cursor: pointer;
     color: var(--dataisland-widget-header-close-color);
     transition: var(--dataisland-widget-color-transition);
+    font-size: var(--dataisland-widget-header-button-font-size);
   }
   .dataisland-widget-header__button:hover {
     color: var(--dataisland-widget-header-close-color-hover);

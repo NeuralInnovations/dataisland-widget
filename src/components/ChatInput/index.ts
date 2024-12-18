@@ -43,7 +43,7 @@ class ChatInput extends LitElement {
                 @input="${this.handleInput}"
                 @keydown="${this.handleKeyDown}"
                 rows="1"
-                placeholder="ask any questions"
+                placeholder="Задайте будь-яке питання..."
               ></textarea>
               <button
                 class="dataisland-widget-chat-button"

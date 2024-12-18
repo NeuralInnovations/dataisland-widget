@@ -22,6 +22,7 @@ export const styles = css`
     border-radius: var(--dataisland-widget-inner-border-radius);
     background-color: #f3f4f6;
     overflow-y: scroll;
+    font-size: var(--dataisland-widget-messages-font-size);
 
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
