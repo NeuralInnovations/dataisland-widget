@@ -26,8 +26,10 @@ import '../components/ChatPlaceholder';
 import logo from '../../public/dataisland-logo.svg';
 import { getTokenFromKey } from '../utils/api';
 import { createChat, deleteChat, getChats } from '../utils/chat';
+import { getLocale, setLocale } from '../localization';
 
 class DataislandWidget extends LitElement {
+  @property({ type: String }) lang: string = 'en';
   @property({ type: String }) apiKey: string = '';
   @property({ type: String }) apiUrl: string = '';
   @property({ type: String }) buttonImageUrl = logo;
@@ -63,6 +65,9 @@ class DataislandWidget extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
+
+    if (this.lang !== getLocale()) setLocale(this.lang)
+
     if (this.isChatInitialised) this.initializeChat();
   }
 

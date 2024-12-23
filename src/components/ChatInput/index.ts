@@ -1,9 +1,10 @@
 import { LitElement, html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { styles } from './index.css';
-import { msg } from '@lit/localize';
+import { localized, msg } from '@lit/localize';
 import { button } from '../../styles/components/chat-button.css';
 
+@localized()
 class ChatInput extends LitElement {
   @property({ type: String }) message: string = '';
   @property({ type: Boolean }) isChatInitialised: boolean = false;
@@ -43,13 +44,13 @@ class ChatInput extends LitElement {
                 @input="${this.handleInput}"
                 @keydown="${this.handleKeyDown}"
                 rows="1"
-                placeholder="Задайте будь-яке питання..."
+                placeholder="${msg('Ask any question...')}"
               ></textarea>
               <button
                 class="dataisland-widget-chat-button"
                 @click="${this.sendMessage}"
               >
-                Send
+                ${msg('Send')}
               </button>
             `
           : html`

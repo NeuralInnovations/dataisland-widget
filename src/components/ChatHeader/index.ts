@@ -2,8 +2,10 @@ import { LitElement, html } from 'lit';
 import { styles } from './index.css';
 import { property } from 'lit/decorators.js';
 import { button } from '../../styles/components/chat-button.css';
+import { localized, msg } from '@lit/localize';
 
-export class ChatHeader extends LitElement {
+@localized()
+class ChatHeader extends LitElement {
   @property({ type: String }) title = '';
   @property({ type: Boolean }) showLastChatButton = false;
 
@@ -19,7 +21,7 @@ export class ChatHeader extends LitElement {
                 @click="${() => this.dispatchEvent(new Event('last-chat'))}"
                 title="Will revert to the previous chat"
               >
-                ${'Назад'}
+                ${msg('Back')}
               </button>
             `
           : null}
@@ -29,7 +31,7 @@ export class ChatHeader extends LitElement {
           @click="${() => this.dispatchEvent(new Event('new-chat'))}"
           title="The previous chat will be deleted after creating a new one"
         >
-          ${'Новий чат'}
+          ${msg('New chat')}
         </button>
       </div>
 

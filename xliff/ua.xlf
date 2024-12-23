@@ -4,6 +4,27 @@
 <body>
 <trans-unit id="s93d85c9969bc1e8e">
   <source>Get started</source>
+  <target>Розпочати!</target>
+</trans-unit>
+<trans-unit id="sc16e00a7a8b2fde2">
+  <source>Back</source>
+  <target>Назад!</target>
+</trans-unit>
+<trans-unit id="s4bd7ca6a8730461d">
+  <source>New chat</source>
+  <target>Новий чат</target>
+</trans-unit>
+<trans-unit id="s57adf424d57c8a0f">
+  <source>Send</source>
+  <target>Відправити</target>
+</trans-unit>
+<trans-unit id="sb8b00d8de29d588c">
+  <source>I am ready to answer your questions.</source>
+  <target>Я готовий відповісти на ваші питання.</target>
+</trans-unit>
+<trans-unit id="sab5a2794e9ea5ada">
+  <source>Ask any question...</source>
+  <target>Задайте будь-яке питання...</target>
 </trans-unit>
 </body>
 </file>

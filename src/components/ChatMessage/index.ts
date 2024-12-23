@@ -29,7 +29,6 @@ class ChatMessages extends LitElement {
   }
 
   private scrollToBottom() {
-    console.log('scrollToBottom');
     if (this.messagesContainer) {
       this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
     }
