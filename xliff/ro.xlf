@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<file target-language="ro" source-language="en" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="s93d85c9969bc1e8e">
+  <source>Get started</source>
+  <target>Începeți</target>
+</trans-unit>
+<trans-unit id="sc16e00a7a8b2fde2">
+  <source>Back</source>
+  <target>Spate</target>
+</trans-unit>
+<trans-unit id="s4bd7ca6a8730461d">
+  <source>New chat</source>
+  <target>Chat nou</target>
+</trans-unit>
+<trans-unit id="s57adf424d57c8a0f">
+  <source>Send</source>
+  <target>Trimite</target>
+</trans-unit>
+<trans-unit id="sb8b00d8de29d588c">
+  <source>I am ready to answer your questions.</source>
+  <target>Sunt gata să vă răspund la întrebări.</target>
+</trans-unit>
+<trans-unit id="sab5a2794e9ea5ada">
+  <source>Ask any question...</source>
+  <target>Pune orice intrebare...</target>
+</trans-unit>
+</body>
+</file>
+</xliff>
