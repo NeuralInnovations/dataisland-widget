@@ -114,8 +114,6 @@ class DataislandWidget extends LitElement {
     }
 
     if (this.chat) (await this.getMessagesDialog(this.chat.id)) as Answer[];
-
-    console.log('this.chats', this.chats);
   }
 
   getPrevChat(): Chat | null {
@@ -128,11 +126,9 @@ class DataislandWidget extends LitElement {
 
     this.chat = lasChat;
     this.getMessagesDialog(lasChat.id);
-    console.log('lasChat', lasChat);
   }
 
   async initializeChat() {
-    console.log('initializeChat');
     this.generateClientSignature();
 
     const { clientSignature } = this;
@@ -148,6 +144,10 @@ class DataislandWidget extends LitElement {
   }
 
   async initializeSdk() {
+    if (window?.dataIslandApp) {
+      return this.sdk = window.dataIslandApp;
+    }
+
     if (this.computedApiUrl && this.tokenFromKey) {
       try {
         const { authSchemaName, userJwtToken } = this.tokenFromKey;
@@ -159,7 +159,7 @@ class DataislandWidget extends LitElement {
           );
         });
 
-        console.log('this.sdk', this.sdk);
+        window.dataIslandApp = this.sdk
 
         this.createChatHandler(CreateChatMode.initial);
       } catch (error) {
@@ -197,10 +197,8 @@ class DataislandWidget extends LitElement {
       answer?.subscribe(async (event) => {
         this.updateAnswer(event.data);
         if (this.messageLoading) this.messageLoading = false;
-        console.log('event.data', event.data);
       });
 
-      console.log(this.messages);
     } catch (error) {
       console.error('Failed to ask in chat:', error);
     } finally {
@@ -217,7 +215,6 @@ class DataislandWidget extends LitElement {
 
   async getMessagesDialog(chatId: string): Promise<any | undefined> {
     if (!this.chat) {
-      console.log('no chat', this.chat);
       return;
     }
 
