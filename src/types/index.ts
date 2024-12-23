@@ -1,3 +1,10 @@
+import { DataIslandApp } from "@neuralinnovations/dataisland-sdk";
+
+declare global {
+    interface Window {
+      dataIslandApp: DataIslandApp;
+    }
+}
 export interface ClientSignature {
   userId: string;
   userName: string;
